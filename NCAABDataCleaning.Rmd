@@ -1,0 +1,57 @@
+---
+title: "NCAAB Project"
+author: "Aaron Marshall"
+date: "2025-07-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("~/Jobs/Projects")
+data = read.csv("CollegeBasketballPlayers2009-2021.csv")
+attach(data)
+
+#remove players that played less than 50% of the minutes
+#can be adjusted to look at more or less players
+delrows = which(data$Min_per < 50)
+data50 = data[-delrows,]
+
+attach(data50)
+
+#remove columns that are either superfluous or not of interest
+#cols 37 through 45 were not recorded in 2009
+#should I just do the analysis on 2010-2021 or remove these columns
+#I think I do the analysis without 2009 first and I can see if those
+#columns are important. If they aren't then add back in 2009 data
+#I'll remove 2009 players and then get rid of columns
+
+del2009 = which(data50$year==2009)
+nextdata = data50[-del2009,]
+
+attach(nextdata)
+
+delcols = c(5,14:15,17:18,20:21,25:28,31:35,37:40,43:47,50,54,56:66)
+finaldata = nextdata[,-delcols]
+
+attach(finaldata)
+
+#there are a couple non 2009 players with some NAs that are removed here
+finaldel = which(is.na(finaldata$rimmade..rimmade.rimmiss.))
+finaldata = finaldata[-finaldel,]
+lastdel = which(is.na(finaldata$midmade..midmade.midmiss.))
+finaldata = finaldata[-lastdel,]
+
+#data should now be ready to use for analysis
+
+#Let's perform principal component analysis before doing the clustering
+
+detach(finaldata)
+detach(nextdata)
+detach(data50)
+detach(data)
+
+
+```
